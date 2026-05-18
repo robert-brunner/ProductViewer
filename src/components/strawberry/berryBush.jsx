@@ -1,9 +1,7 @@
 import { useRef, useState } from 'react'
 import './strawberryPage.css'
-import FakeHeader from './berryHeader'
-
-
-
+import FakeHeader from './berryHeader';
+import FloatingBox from '../experiments/firstBox';
 
 const productImages = [
   'https://ext.same-assets.com/2615582048/679051354.jpeg',
@@ -46,49 +44,63 @@ const moreProducts = [
 
 export default function StrawberryPage() {
   const [selectedImage, setSelectedImage] = useState(0)
+  const [show3D, setShow3D] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
-  const openLightbox = () => setLightboxOpen(true)
+  const openLightbox = () => {
+    if (!show3D) setLightboxOpen(true)
+  }
   const closeLightbox = () => setLightboxOpen(false)
 
   const nextImage = (e) => {
     e.stopPropagation()
-    setSelectedImage((prev) => (prev + 1) % productImages.length)
+    if (show3D) {
+      setShow3D(false)
+      setSelectedImage(0)
+    } else if (selectedImage === productImages.length - 1) {
+      setShow3D(true)
+    } else {
+      setSelectedImage((prev) => prev + 1)
+    }
   }
 
   const prevImage = (e) => {
     e.stopPropagation()
-    setSelectedImage((prev) => (prev - 1 + productImages.length) % productImages.length)
+    if (show3D) {
+      setShow3D(false)
+      setSelectedImage(productImages.length - 1)
+    } else if (selectedImage === 0) {
+      setShow3D(true)
+    } else {
+      setSelectedImage((prev) => prev - 1)
+    }
   }
-
 
   const imageRef = useRef(null)
 
-const handleZoom = (e) => {
-  const { left, top, width, height } =
-    e.currentTarget.getBoundingClientRect()
+  const handleZoom = (e) => {
+    if (show3D) return
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - left) / width) * 100
+    const y = ((e.clientY - top) / height) * 100
+    if (imageRef.current) {
+      imageRef.current.style.transformOrigin = `${x}% ${y}%`
+      imageRef.current.style.transform = "scale(2.2)"
+    }
+  }
 
-  const x = ((e.clientX - left) / width) * 100
-  const y = ((e.clientY - top) / height) * 100
-
-  imageRef.current.style.transformOrigin = `${x}% ${y}%`
-  imageRef.current.style.transform = "scale(2.2)"
-}
-
-const resetZoom = () => {
-  imageRef.current.style.transform = "scale(1)"
-  imageRef.current.style.transformOrigin = "center center"
-}
-
+  const resetZoom = () => {
+    if (show3D || !imageRef.current) return
+    imageRef.current.style.transform = "scale(1)"
+    imageRef.current.style.transformOrigin = "center center"
+  }
 
   return (
     <div>
       <FakeHeader/>
-      {/* Top Bar */}
 
-      {/* Breadcrumb */}
       <nav className="breadcrumb">
         <a href="/">Home</a>
         <span>/</span>
@@ -99,28 +111,67 @@ const resetZoom = () => {
         <span className="breadcrumb-current">SF900C-RX Remote Control Receiver, Long Range</span>
       </nav>
 
-      {/* Main */}
       <main className="main-container">
         <div className="product-section">
-          {/* Images */}
+          
+          {/* Images Gallery */}
           <div className="product-images">
-            <div className="main-image" onMouseMove={handleZoom} onMouseLeave={resetZoom}>
-              <img ref={imageRef} src={productImages[selectedImage]} alt="SF900C-RX Product" />
+            <div 
+              className="main-image" 
+              onMouseMove={handleZoom} 
+              onMouseLeave={resetZoom}
+              onClick={openLightbox}
+              style={{ position: 'relative', width: '100%', height: '450px', background: show3D ? '#000' : '#fff', overflow: 'hidden' }}
+            >
+              {show3D ? (
+                <FloatingBox />
+              ) : (
+                <img ref={imageRef} src={productImages[selectedImage]} alt="SF900C-RX Product" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              )}
             </div>
-            <div className="thumbnail-row">
+
+            {/* Thumbnail Selection Row */}
+            <div className="thumbnail-row" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
               {productImages.map((img, index) => (
                 <button
                   key={index}
-                  className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                  onClick={() => setSelectedImage(index)}
+                  className={`thumbnail ${(!show3D && selectedImage === index) ? 'active' : ''}`}
+                  onClick={() => {
+                    setShow3D(false)
+                    setSelectedImage(index)
+                  }}
+                  style={{ width: '80px', height: '80px', padding: '2px', border: (!show3D && selectedImage === index) ? '2px solid #000' : '1px solid #ccc' }}
                 >
-                  <img src={img} alt={`View ${index + 1}`} />
+                  <img src={img} alt={`View ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </button>
               ))}
+
+              {/* 3D Model View Selection Button */}
+              <button
+                className={`thumbnail ${show3D ? 'active' : ''}`}
+                onClick={() => setShow3D(true)}
+                style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  background: '#222', 
+                  color: '#fff', 
+                  fontSize: '11px', 
+                  fontWeight: 'bold', 
+                  borderRadius: '4px',
+                  border: show3D ? '2px solid #0056b3' : '1px solid #444',
+                  cursor: 'pointer'
+                }}
+              >
+                <span style={{ fontSize: '18px', marginBottom: '2px' }}>⟳</span>
+                3D VIEW
+              </button>
             </div>
           </div>
 
-          {/* Details */}
           <div className="product-details">
             <h1>SF900C-RX Remote Control Receiver, Long Range</h1>
             <p className="price">$227.95 – $279.95</p>
@@ -178,7 +229,6 @@ const resetZoom = () => {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="tabs-section">
           <div className="tab-headers">
             <button
@@ -244,7 +294,6 @@ const resetZoom = () => {
           </div>
         </div>
 
-        {/* Related Products */}
         <section className="related-section">
           <h2>You may also like...</h2>
           <div className="products-grid">
@@ -278,12 +327,10 @@ const resetZoom = () => {
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="footer">
         <p>© 2026 Applied Wireless</p>
       </footer>
 
-      {/* Lightbox Modal */}
       {lightboxOpen && (
         <div className="lightbox" onClick={closeLightbox}>
           <button className="lightbox-close" onClick={closeLightbox}>×</button>
