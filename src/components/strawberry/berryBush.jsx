@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import './strawberryPage.css'
 import FakeHeader from './berryHeader';
 import FloatingBox from '../experiments/firstBox';
+import BoxenTwo from '../experiments/boxTwo.jsx';
 
 const productImages = [
   'https://ext.same-assets.com/2615582048/679051354.jpeg',
@@ -44,23 +45,25 @@ const moreProducts = [
 
 export default function StrawberryPage() {
   const [selectedImage, setSelectedImage] = useState(0)
-  const [show3D, setShow3D] = useState(false)
+  const [active3DView, setActive3DView] = useState(null) // null, 'firstBox', or 'boxenTwo'
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   const openLightbox = () => {
-    if (!show3D) setLightboxOpen(true)
+    if (!active3DView) setLightboxOpen(true)
   }
   const closeLightbox = () => setLightboxOpen(false)
 
   const nextImage = (e) => {
     e.stopPropagation()
-    if (show3D) {
-      setShow3D(false)
+    if (active3DView === 'firstBox') {
+      setActive3DView('boxenTwo')
+    } else if (active3DView === 'boxenTwo') {
+      setActive3DView(null)
       setSelectedImage(0)
     } else if (selectedImage === productImages.length - 1) {
-      setShow3D(true)
+      setActive3DView('firstBox')
     } else {
       setSelectedImage((prev) => prev + 1)
     }
@@ -68,11 +71,13 @@ export default function StrawberryPage() {
 
   const prevImage = (e) => {
     e.stopPropagation()
-    if (show3D) {
-      setShow3D(false)
+    if (active3DView === 'boxenTwo') {
+      setActive3DView('firstBox')
+    } else if (active3DView === 'firstBox') {
+      setActive3DView(null)
       setSelectedImage(productImages.length - 1)
     } else if (selectedImage === 0) {
-      setShow3D(true)
+      setActive3DView('boxenTwo')
     } else {
       setSelectedImage((prev) => prev - 1)
     }
@@ -81,7 +86,7 @@ export default function StrawberryPage() {
   const imageRef = useRef(null)
 
   const handleZoom = (e) => {
-    if (show3D) return
+    if (active3DView) return
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
     const x = ((e.clientX - left) / width) * 100
     const y = ((e.clientY - top) / height) * 100
@@ -92,7 +97,7 @@ export default function StrawberryPage() {
   }
 
   const resetZoom = () => {
-    if (show3D || !imageRef.current) return
+    if (active3DView || !imageRef.current) return
     imageRef.current.style.transform = "scale(1)"
     imageRef.current.style.transformOrigin = "center center"
   }
@@ -121,11 +126,11 @@ export default function StrawberryPage() {
               onMouseMove={handleZoom} 
               onMouseLeave={resetZoom}
               onClick={openLightbox}
-              style={{ position: 'relative', width: '100%', height: '450px', background: show3D ? '#000' : '#fff', overflow: 'hidden' }}
+              style={{ position: 'relative', width: '100%', height: '450px', background: active3DView ? '#000' : '#fff', overflow: 'hidden' }}
             >
-              {show3D ? (
-                <FloatingBox />
-              ) : (
+              {active3DView === 'firstBox' && <FloatingBox />}
+              {active3DView === 'boxenTwo' && <BoxenTwo />}
+              {!active3DView && (
                 <img ref={imageRef} src={productImages[selectedImage]} alt="SF900C-RX Product" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               )}
             </div>
@@ -135,21 +140,21 @@ export default function StrawberryPage() {
               {productImages.map((img, index) => (
                 <button
                   key={index}
-                  className={`thumbnail ${(!show3D && selectedImage === index) ? 'active' : ''}`}
+                  className={`thumbnail ${(!active3DView && selectedImage === index) ? 'active' : ''}`}
                   onClick={() => {
-                    setShow3D(false)
+                    setActive3DView(null)
                     setSelectedImage(index)
                   }}
-                  style={{ width: '80px', height: '80px', padding: '2px', border: (!show3D && selectedImage === index) ? '2px solid #000' : '1px solid #ccc' }}
+                  style={{ width: '80px', height: '80px', padding: '2px', border: (!active3DView && selectedImage === index) ? '2px solid #000' : '1px solid #ccc' }}
                 >
                   <img src={img} alt={`View ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </button>
               ))}
 
-              {/* 3D Model View Selection Button */}
+              {/* 3D View 1 Selection Button */}
               <button
-                className={`thumbnail ${show3D ? 'active' : ''}`}
-                onClick={() => setShow3D(true)}
+                className={`thumbnail ${active3DView === 'firstBox' ? 'active' : ''}`}
+                onClick={() => setActive3DView('firstBox')}
                 style={{ 
                   width: '80px', 
                   height: '80px', 
@@ -162,12 +167,36 @@ export default function StrawberryPage() {
                   fontSize: '11px', 
                   fontWeight: 'bold', 
                   borderRadius: '4px',
-                  border: show3D ? '2px solid #0056b3' : '1px solid #444',
+                  border: active3DView === 'firstBox' ? '2px solid #0056b3' : '1px solid #444',
                   cursor: 'pointer'
                 }}
               >
-                <span style={{ fontSize: '18px', marginBottom: '2px' }}>⟳</span>
-                3D VIEW
+                <span style={{ fontSize: '16px', marginBottom: '2px' }}>⟳</span>
+                3D VIEW 1
+              </button>
+
+              {/* 3D View 2 Selection Button */}
+              <button
+                className={`thumbnail ${active3DView === 'boxenTwo' ? 'active' : ''}`}
+                onClick={() => setActive3DView('boxenTwo')}
+                style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  background: '#222', 
+                  color: '#fff', 
+                  fontSize: '11px', 
+                  fontWeight: 'bold', 
+                  borderRadius: '4px',
+                  border: active3DView === 'boxenTwo' ? '2px solid #0056b3' : '1px solid #444',
+                  cursor: 'pointer'
+                }}
+              >
+                <span style={{ fontSize: '16px', marginBottom: '2px' }}>⟳</span>
+                3D VIEW 2
               </button>
             </div>
           </div>

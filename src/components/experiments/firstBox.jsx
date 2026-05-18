@@ -26,7 +26,7 @@ function ProductModel() {
 }
 
 const FloatingBox = () => {
-  const [hovered, setHovered] = useState(true);
+  const [hovered, setHovered] = useState(false);
 
   // Define the target corner vertex where the three axes intersect
   // Adjust these coordinates slightly to match the physical front-left corner of your GLTF model
