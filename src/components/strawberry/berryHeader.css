@@ -1,0 +1,95 @@
+.berry-header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: white;
+}
+
+.berry-top {
+  height: 115px;
+
+  background:
+    linear-gradient(rgba(71,132,177,.45), rgba(71,132,177,.45)),
+    url('../strawberry/berryImg/berryTop.webp');
+
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 60px;
+}
+
+.berry-logo img {
+  height: 92px;
+  object-fit: contain;
+}
+
+.berry-search {
+  display: flex;
+  align-items: center;
+}
+
+.berry-search input {
+  width: 270px;
+  height: 38px;
+
+  border: 1px solid rgba(255,255,255,.35);
+
+  background: rgba(255,255,255,.08);
+
+  color: white;
+
+  padding: 0 14px;
+}
+
+.berry-search input::placeholder {
+  color: rgba(255,255,255,.7);
+}
+
+.berry-search button {
+  width: 42px;
+  height: 38px;
+
+  border: 1px solid rgba(255,255,255,.35);
+  border-left: none;
+
+  background: rgba(255,255,255,.12);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.berry-phone {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.berry-nav {
+  height: 48px;
+  background: #3f84b2;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 60px;
+  gap: 34px;
+}
+
+.berry-nav a {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.berry-nav-right {
+  margin-left: auto;
+
+  display: flex;
+  gap: 28px;
+}

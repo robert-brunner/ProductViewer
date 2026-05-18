@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FloatingBox from "./components/experiments/firstBox";
-import SF900CPage from "./singleFile/sf900C.jsx";
+// import ProductPage from "./singleFile/sf900c/applied-wireless-clone/src/app/page.jsx";
+import StrawberryPage from "./components/strawberry/berryBush";
+
 
 
 export default function App() {
@@ -11,8 +13,9 @@ export default function App() {
 
       <Routes>
 
-        <Route path="/" element={<SF900CPage />} />
+  
         <Route path="/box" element={<FloatingBox />} />
+        <Route path="/" element={<StrawberryPage />} />
 
       </Routes>
 
