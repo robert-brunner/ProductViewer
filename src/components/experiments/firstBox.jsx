@@ -109,7 +109,7 @@ const FloatingBox = () => {
   </Text3D>
 </group>
 {/* Subscript Detail Label */}
-<group position={[originCorner[0] - 0.15, originCorner[1] - 0.18, originCorner[2] - 0.70]} rotation={[0, -Math.PI / 2, 0]}>
+<group position={[originCorner[0] - 0.15, originCorner[1] - 0.18, originCorner[2] - 0.69]} rotation={[0, -Math.PI / 2, 0]}>
   <Text3D font={FONT_URL} size={0.045} height={0.002}>
     142 mm (Body only)
     <meshBasicMaterial color="#888888" />
