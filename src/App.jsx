@@ -1,65 +1,22 @@
-import { Canvas } from "@react-three/fiber";
-import {
-  OrbitControls,
-  Environment,
-  ContactShadows,
-  useGLTF,
-} from "@react-three/drei";
-import modelUrl from "./components/models/LP-61FMBR.glb";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import FloatingBox from "./components/experiments/firstBox";
+import SF900CPage from "./singleFile/sf900C.jsx";
 
-
-function ProductModel() {
-
-  const { scene } = useGLTF(modelUrl);
-
-return (
-  <primitive
-    object={scene}
-    scale={0.01}
-    position={[0, 0, 0]}
-    rotation={[0, 0, 0]}
-  />
-);
-
-}
 
 export default function App() {
 
   return (
 
-    <div className="w-screen h-screen bg-black">
+    <BrowserRouter>
 
-      <Canvas
-  style={{
-    width: "100vw",
-    height: "100vh",
-  }}
-  camera={{ position: [0, 2, 5], fov: 45 }}
->
+      <Routes>
 
-        <ambientLight intensity={0.5} />
+        <Route path="/" element={<SF900CPage />} />
+        <Route path="/box" element={<FloatingBox />} />
 
-        <Environment preset="warehouse" />
+      </Routes>
 
-        <ProductModel />
-
-        <ContactShadows
-          position={[0, -1.5, 0]}
-          opacity={0.4}
-          scale={10}
-          blur={2}
-          far={4}
-        />
-
-        <OrbitControls
-          enablePan={false}
-          enableDamping
-          dampingFactor={0.05}
-        />
-
-      </Canvas>
-
-    </div>
+    </BrowserRouter>
 
   );
 
